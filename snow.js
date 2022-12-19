@@ -1,57 +1,60 @@
-var canvas = document.querySelector('#snowField');
-var ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-var totalSnow = 100;
-function Snow() {
-    this.x = Math.round(Math.random() * canvas.width);
-    this.y = Math.round(Math.random() * canvas.height);
-    this.r = Math.random() * 4 + 1;
-    this.d = Math.random() * totalSnow;
-    this.a = Math.random() * 5;
+class oCopo{
+  constructor(tam, id){
+     this.x = 0;
+     this.y = 0;
+     this.size = tam;
+     this.nombre = id
+     this.obj = document.createElement("div");
+     this.obj.setAttribute("id",id);
+     this.obj.innerText="*";
+     this.obj.style.position = "absolute";
+     this.obj.style.fontSize = tam+"px";
+     this.obj.style.color = "white";
+     document.body.appendChild(this.obj)
 }
-Snow.prototype.update = function () {
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
-    this.x += Math.sin(this.a) / 4;
-    this.y += Math.random() * 0.0001 + 0.5;
-    // this.y += Math.cos(this.a + this.d) + 1 + this.r/2;
-    if(this.x > canvas.width || this.x < 0) {
-        this.x = Math.random() * canvas.width;
-    }
-    if(this.y > canvas.height) {
-        this.y = 0;
-    }
-    this.a += 0.01;
-    // console.log(this.x + ' ' + this.y);
-};
-var snows = [];
-var imgTree = new Image();
-imgTree.src = 'https://raw.githubusercontent.com/laptrinhio/xmas-snow-website/master/tree.png';
-var imgLight = new Image();
-imgLight.src = 'https://raw.githubusercontent.com/laptrinhio/xmas-snow-website/master/light.png';
-function draw() {
-    console.log(imgTree.height);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imgTree, 0, canvas.height - imgTree.height / 4 + 50, 500, 550);
-    ctx.drawImage(imgLight, canvas.width - imgLight.width/3, 0, imgLight.width/4, imgLight.height/4);
-    // ctx.fontFamily = 'Segoe UI, sans-serif';
-    ctx.font = '48px Segoe UI, sans-serif';
-    ctx.fillText('TEST & TEST', 500, 350);
-    ctx.fillText('Wish you all a Merry Christmas!', 500, 450);
-    for(var i = 0; i < snows.length; i++) {
-        snows[i].update();
-    }
-    requestAnimationFrame(draw);
+dibujar(x,y){
+     this.x = x;
+     this.y = y;
+     this.obj.style.top = this.y+"px";
+     this.obj.style.left = this.x+"px";
+     }
 }
-window.onload = function () {
-    for(var i = 0; i < totalSnow; ++i) {
-        var _snow = new Snow();
-        snows.push(_snow);
+function iniCopos(num, anc, alto){
+   var copos = new Array(num);
+   var tam, x, y;
+   for (let i = 0; i<num; i++)
+     {
+     tam = Math.round(Math.random()*10)+ 8;
+     copos[i] = new oCopo(tam, "c"+i);
+     x = parseInt(Math.random()*anc);
+     y = parseInt(Math.random()*alto);
+     copos[i].dibujar(x,y);
+     }
+return copos;
+}
+function iniNevada(num, vel)
+{
+var ancho = document.body.offsetWidth-10;
+var alto = window.innerHeight-10;
+var losCopos = iniCopos(num, ancho, alto)
+nevar(losCopos, ancho,alto, vel);
+} 
+function nevar(copos, coposAncho, coposAlto, vel)
+{
+var x, y;
+for (let i = 0; i < copos.length; i++)
+    {
+    y = copos[i].y;
+x = copos[i].x;
+    if (Math.random() > 0.5)
+        y += parseInt(Math.random()+1);
+    y += parseInt(Math.random()+2);
+    if (y >= (coposAlto - copos[i].size))
+        {
+        y = Math.round(Math.random()*10);
+        x  =parseInt(Math.random()*coposAncho-1); 
+        }
+copos[i].dibujar(x,y); 
     }
-    console.log(snows);
-    draw();
-};
+setTimeout(nevar, vel, copos,  coposAncho, coposAlto, vel);
+}
